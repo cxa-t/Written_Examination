@@ -1,3 +1,5 @@
+// https://leetcode.cn/problems/maximum-sum-of-distinct-subarrays-with-length-k/
+
 #include<iostream>
 #include<unordered_map>
 #include<vector>
