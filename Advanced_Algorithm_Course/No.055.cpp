@@ -1,7 +1,9 @@
 // https://leetcode.cn/problems/reverse-nodes-in-k-group/
 
 //思路
-//先求出总数，然后k个一组进行反转
+//先判断有多少组
+//然后每个组进行链表翻转
+//每次记录需要头插的伪头节点
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -17,39 +19,39 @@ class Solution
 public:
     ListNode* reverseKGroup(ListNode* head, int k)
     {
-        // 1. 先求出需要逆序多少组
-        int n = 0;
+        // 统计总数
         ListNode* cur = head;
+        int n = 0;
         while (cur)
         {
-            cur = cur->next;
             n++;
+            cur = cur->next;
         }
+        if (n < k) return head;
+        //共有n组需要逆序
         n /= k;
 
-        // 2. 重复 n 次: 长度为 k 的链表的逆序即可
-        ListNode* newHead = new ListNode(0);
-        ListNode* prev = newHead;
+        ListNode* newhead = new ListNode();
+        newhead->next = nullptr;
         cur = head;
-
+        ListNode* prev = newhead;
         for (int i = 0; i < n; i++)
         {
-            ListNode* tmp = cur;
-            // 反转当前组的 k 个节点
-            for (int j = 0; j < k; j++)
+            ListNode* tmp = cur;//记录下一次翻转需要的伪头节点
+            int count = k;//每一组k个也就执行k次
+            while (count)
             {
                 ListNode* next = cur->next;
                 cur->next = prev->next;
                 prev->next = cur;
+                count--;
                 cur = next;
             }
-            prev = tmp;
+            prev = tmp;//每一组完之后，下一次翻转的头节点应该是当前这组的第一个节点，也就是一开始记录的第一个节点
         }
-
-        // 把不需要翻转的接上
         prev->next = cur;
-        ListNode* result = newHead->next;
-        delete newHead;
-        return result;
+        ListNode* ret = newhead->next;
+        delete newhead;//删除多申请的空间
+        return ret;
     }
 };
