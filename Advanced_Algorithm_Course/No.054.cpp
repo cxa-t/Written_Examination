@@ -1,9 +1,6 @@
-// https://leetcode.cn/problems/reverse-nodes-in-k-group/
+// https://leetcode.cn/problems/merge-k-sorted-lists/
 
-//思路
-//先判断有多少组
-//然后每个组进行链表翻转
-//每次记录需要头插的伪头节点
+
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -14,44 +11,38 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
+
+//法一 思路
+//利用优先队列（堆），每次将多个链表的第一个节点加入堆中（必须非空）
+//然后拿到堆顶最小的元素，也就是值最小的节点加入结果
 class Solution
 {
 public:
-    ListNode* reverseKGroup(ListNode* head, int k)
+    struct cmp
     {
-        // 统计总数
-        ListNode* cur = head;
-        int n = 0;
-        while (cur)
+        bool operator()(const ListNode* l1, const ListNode* l2)
         {
-            n++;
-            cur = cur->next;
+            return l1->val > l2->val;
         }
-        if (n < k) return head;
-        //共有n组需要逆序
-        n /= k;
-
-        ListNode* newhead = new ListNode();
-        newhead->next = nullptr;
-        cur = head;
-        ListNode* prev = newhead;
-        for (int i = 0; i < n; i++)
+    };
+    ListNode* mergeKLists(vector<ListNode*>& lists)
+    {
+        if (lists.size() == 0) return nullptr;
+        priority_queue<ListNode*, vector<ListNode*>, cmp> heap;
+        for (ListNode* l : lists) if (l) heap.push(l);
+        ListNode* newnode = new ListNode();
+        ListNode* tail = newnode;
+        while (!heap.empty())
         {
-            ListNode* tmp = cur;//记录下一次翻转需要的伪头节点
-            int count = k;//每一组k个也就执行k次
-            while (count)
-            {
-                ListNode* next = cur->next;
-                cur->next = prev->next;
-                prev->next = cur;
-                count--;
-                cur = next;
-            }
-            prev = tmp;//每一组完之后，下一次翻转的头节点应该是当前这组的第一个节点，也就是一开始记录的第一个节点
+            ListNode* cur = heap.top();
+            heap.pop();
+            tail->next = cur;
+            tail = tail->next;
+            if (cur->next) heap.push(cur->next);
         }
-        prev->next = cur;
-        ListNode* ret = newhead->next;
-        delete newhead;//删除多申请的空间
-        return ret;
+        tail = newnode->next;
+        delete newnode;
+        return tail;
     }
 };
+
