@@ -46,3 +46,55 @@ public:
     }
 };
 
+
+//法二
+//利用归并的思路进行合并
+class Solution
+{
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists)
+    {
+        return merge(lists, 0, lists.size() - 1);
+    }
+
+    ListNode* merge(vector<ListNode*>& lists, int left, int right)
+    {
+        if (left > right) return nullptr;
+        if (left == right) return lists[left];
+
+        int mid = (left + right) >> 1;
+
+        ListNode* pleft = merge(lists, left, mid);
+        ListNode* pright = merge(lists, mid + 1, right);
+
+        return merge2list(pleft, pright);
+    }
+    ListNode* merge2list(ListNode* pleft, ListNode* pright)
+    {
+        if (pleft == nullptr) return pright;
+        if (pright == nullptr) return pleft;
+
+        ListNode* newhead = new ListNode();
+        ListNode* tail = newhead;
+        while (pleft && pright)
+        {
+            if (pleft->val <= pright->val)
+            {
+                tail->next = pleft;
+                pleft = pleft->next;
+            }
+            else
+            {
+                tail->next = pright;
+                pright = pright->next;
+            }
+            tail = tail->next;
+        }
+        if (pleft) tail->next = pleft;
+        if (pright) tail->next = pright;
+
+        tail = newhead->next;
+        delete newhead;
+        return tail;
+    }
+};
