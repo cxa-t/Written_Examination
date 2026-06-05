@@ -1,6 +1,5 @@
 // https://leetcode.cn/problems/delete-and-earn/
 
-
 //选择数字 i，就不能选择 i - 1 和 i + 1
 //所以这题可以转化为
 //数字 i 就像第 i 间房子
