@@ -35,3 +35,35 @@ public:
         return ret;
     }
 };
+
+
+// 记忆化搜索
+class Solution
+{
+public:
+    int lengthOfLIS(vector<int>& nums)                     // 计算最长严格递增子序列的长度
+    {
+        int n = nums.size();                               // 获取数组长度
+        vector<int> memo(n);                               // 记录以每个位置作为起点的最长递增子序列长度
+        int ret = 0;                                       // 保存全局最长递增子序列长度
+        for (int i = 0; i < n; i++)                         // 枚举每一个位置作为递增子序列起点
+        {
+            ret = max(ret, dfs(i, nums, memo));            // 更新所有起点中的最大递增子序列长度
+        }
+        return ret;                                        // 返回最长严格递增子序列长度
+    }
+    int dfs(int pos, vector<int>& nums, vector<int>& memo) // 计算以pos位置开头的最长递增子序列长度
+    {
+        if (memo[pos]) return memo[pos];                    // 当前状态已计算则直接返回缓存结果
+        int ret = 1;                                       // 至少可以选择当前元素自身形成长度1的子序列
+        for (int i = pos + 1; i < nums.size(); i++)         // 枚举当前元素之后的所有位置
+        {
+            if (nums[i] > nums[pos])                        // 判断后面的元素是否可以接在当前元素之后
+            {
+                ret = max(ret, dfs(i, nums, memo) + 1);    // 选择当前元素并更新最长递增子序列长度
+            }
+        }
+        memo[pos] = ret;                                   // 缓存以pos为起点的最长递增子序列长度
+        return memo[pos];                                  // 返回当前状态的计算结果
+    }
+};
