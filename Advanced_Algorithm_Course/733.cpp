@@ -1,5 +1,6 @@
 // https://leetcode.cn/problems/flood-fill/
 
+// DFS
 class Solution
 {
 public:
@@ -36,5 +37,36 @@ public:
             return image;                              // 直接返回原图像
         dfs(image, sr, sc, image[sr][sc], color);           // 从起始位置开始深度优先填充
         return image;                                  // 返回填充后的图像
+    }
+};
+
+
+// BFS
+class Solution
+{
+public:
+    int dx[4] = { -1, 1, 0, 0 };                                      // 定义上下左右四个方向的行偏移
+    int dy[4] = { 0, 0, -1, 1 };                                      // 定义上下左右四个方向的列偏移
+    using PII = pair<int, int>;                                   // 使用PII表示一个像素位置坐标
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) // 使用BFS完成图像颜色填充
+    {
+        int prev = image[sr][sc];                                 // 保存起点的原始颜色
+        if (prev == color) return image;                            // 原颜色与目标颜色相同则无需处理
+        queue<PII> q;                                              // 使用队列保存等待处理的位置
+        q.push({ sr, sc });                                          // 将起始位置加入队列
+        while (!q.empty())                                         // 队列不为空时继续广度优先搜索
+        {
+            auto [x, y] = q.front();                              // 获取当前需要处理的位置
+            q.pop();                                               // 将当前位置移出队列
+            image[x][y] = color;                                  // 将当前位置修改为目标颜色
+            for (int k = 0; k < 4; k++)                            // 枚举上下左右四个相邻方向
+            {
+                int a = x + dx[k];                                // 计算相邻位置的行坐标
+                int b = y + dy[k];                                // 计算相邻位置的列坐标
+                if (a >= 0 && a < image.size() && b >= 0 && b < image[0].size() && image[a][b] == prev) // 判断相邻位置是否为同色区域
+                    q.push({ a,b });                                 // 将满足条件的相邻位置加入队列
+            }
+        }
+        return image;                                              // 返回完成填充后的图像
     }
 };
