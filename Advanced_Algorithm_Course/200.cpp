@@ -1,6 +1,7 @@
 // https://leetcode.cn/problems/number-of-islands/
 
 
+// dfs
 class Solution
 {
 public:
@@ -39,4 +40,48 @@ public:
         }
         return ret;                                 // 返回岛屿总数量
     }
+};
+
+
+// bfs
+class Solution  
+{ 
+public: 
+    int m = 0;                                                   // 保存网格的行数
+    int n = 0;                                                   // 保存网格的列数
+    int ret = 0;                                                 // 记录岛屿的总数量
+    int dx[4] = {-1, 1, 0, 0};                                  // 定义上下左右四个方向的行偏移
+    int dy[4] = {0, 0, -1, 1};                                  // 定义上下左右四个方向的列偏移
+    vector<vector<bool>> vis;                                    // 标记每个位置是否已经访问
+    void bfs(vector<vector<char>>& grid, int i, int j)            // 递归遍历当前岛屿的所有相连陆地
+    { 
+        vis[i][j] = true;                                        // 标记当前陆地已经访问
+        for(int k = 0; k < 4; k++)                               // 枚举上下左右四个相邻方向
+        { 
+            int x = i + dx[k];                                   // 计算相邻位置的行坐标
+            int y = j + dy[k];                                   // 计算相邻位置的列坐标
+            if(x >= 0 && x < m && y >= 0 && y < n && !vis[x][y] && grid[x][y] != '0') // 判断相邻位置是否为未访问陆地
+            { 
+                bfs(grid, x, y);                                 // 继续递归遍历当前岛屿
+            } 
+        } 
+    } 
+    int numIslands(vector<vector<char>>& grid)                    // 统计网格中的岛屿数量
+    { 
+        m = grid.size();                                         // 获取网格的行数
+        n = grid[0].size();                                      // 获取网格的列数
+        vis.resize(m, vector<bool>(n));                           // 初始化所有位置为未访问状态
+        for(int i = 0; i < m; i++)                               // 遍历网格中的每一行
+        { 
+            for(int j = 0; j < n; j++)                           // 遍历当前行中的每一列
+            { 
+                if(!vis[i][j] && grid[i][j] == '1')              // 找到一个还未访问的新岛屿起点
+                { 
+                    bfs(grid, i, j);                              // 遍历并标记当前整座岛屿
+                    ret++;                                       // 当前岛屿处理完成后数量加一
+                } 
+            } 
+        } 
+        return ret;                                               // 返回岛屿的总数量
+    } 
 };
