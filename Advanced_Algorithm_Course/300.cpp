@@ -67,3 +67,36 @@ public:
         return memo[pos];                                  // 返回当前状态的计算结果
     }
 };
+
+
+// 贪心
+class Solution
+{
+public:
+    int lengthOfLIS(vector<int>& nums) // 返回最长严格递增子序列的长度
+    {
+        int n = nums.size(); // 获取数组长度
+        vector<int> ret; // ret[i] 表示长度为 i+1 的递增子序列中，结尾元素的最小值
+        ret.push_back(nums[0]); // 先把第一个元素加入 ret，表示当前最长递增子序列长度至少为1
+        for (int i = 1; i < n; i++) // 从第二个元素开始依次遍历 nums
+        {
+            if (nums[i] > ret.back()) // 如果当前元素比 ret 最后一个元素还大，说明可以接在当前最长递增子序列后面
+            {
+                ret.push_back(nums[i]); // 将当前元素加入 ret，使当前最长递增子序列长度加1
+            }
+            else // 当前元素无法直接接在最长递增子序列后面，需要找到合适位置进行替换
+            {
+                int left = 0; // 二分查找左边界
+                int right = ret.size() - 1; // 二分查找右边界
+                while (left < right) // 当左右边界没有重合时继续二分查找
+                {
+                    int mid = (left + right) / 2; // 计算中间位置
+                    if (ret[mid] < nums[i]) left = mid + 1; // 如果 ret[mid] 小于当前元素，说明替换位置一定在 mid 的右侧
+                    else right = mid; // 如果 ret[mid] 大于等于当前元素，说明 mid 可能就是答案，因此缩小右边界
+                }
+                ret[left] = nums[i]; // 用当前元素替换第一个大于等于它的元素，使对应长度的递增子序列结尾尽可能小
+            }
+        }
+        return ret.size(); // ret 的长度就是最长严格递增子序列的长度
+    }
+};
